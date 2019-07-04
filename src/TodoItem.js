@@ -2,17 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function TodoItem(props) {
+  const { item } = props;
+
   return (
     <div className="todo-item">
       <input
         type="checkbox"
-        checked={props.item.completed}
+        checked={item.completed}
         className="todo-item__input"
+        id={item.id}
       />
 
-      <span className="todo-item__title">{props.item.title}</span>
+      <label
+        className="todo-item__title"
+        htmlFor={item.id}
+        onClick={() => props.onChange(item.id)}
+      >
+        {item.title}
+      </label>
+
       <hr />
-      <p>{props.user.username}</p>
+      <p>{item.user.username}</p>
     </div>
   );
 }
@@ -21,10 +31,10 @@ TodoItem.propTypes = {
   item: PropTypes.shape({
     completed: PropTypes.bool,
     title: PropTypes.string,
+    user: PropTypes.object,
+    id: PropTypes.number,
   }).isRequired,
-  user: PropTypes.shape({
-    username: PropTypes.string,
-  }).isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default TodoItem;

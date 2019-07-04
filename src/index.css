@@ -63,6 +63,7 @@ body {
   height: 20px;
   background-color: white;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .todo-item__input:checked + .todo-item__title:before {

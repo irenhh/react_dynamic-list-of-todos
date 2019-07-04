@@ -8,6 +8,7 @@ function User(props) {
     phone,
     website,
   } = props.user;
+
   return (
     <div className="user">
       <p>

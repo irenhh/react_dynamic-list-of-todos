@@ -2,38 +2,42 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function Sorting(props) {
+  const { sortBy, isLoaded } = props;
+
   return (
-    <div style={{ display: props.style }}>
-      <span>Sort by</span>
-      <button
-        type="submit"
-        onClick={() => props.sortBy('title')}
-        className="sorting-button"
-      >
-        title
-      </button>
+    isLoaded && (
+      <div>
+        <span>Sort by</span>
+        <button
+          type="button"
+          onClick={() => sortBy('title')}
+          className="sorting-button"
+        >
+          title
+        </button>
 
-      <button
-        type="submit"
-        onClick={() => props.sortBy('userName')}
-        className="sorting-button"
-      >
-        user
-      </button>
+        <button
+          type="button"
+          onClick={() => sortBy('name', 'user')}
+          className="sorting-button"
+        >
+          user
+        </button>
 
-      <button
-        type="submit"
-        onClick={() => props.sortBy('completed')}
-        className="sorting-button"
-      >
-        incompleted first
-      </button>
-    </div>
+        <button
+          type="button"
+          onClick={() => sortBy('completed')}
+          className="sorting-button"
+        >
+          incompleted first
+        </button>
+      </div>
+    )
   );
 }
 
 Sorting.propTypes = {
-  style: PropTypes.string.isRequired,
+  isLoaded: PropTypes.bool.isRequired,
   sortBy: PropTypes.func.isRequired,
 };
 
