@@ -10,7 +10,7 @@ function TodoItem(props) {
         type="checkbox"
         checked={item.completed}
         className="todo-item__input"
-        id={item.id}
+        id={`${item.title}-${item.id}`}
       />
 
       <label

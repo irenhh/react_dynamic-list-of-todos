@@ -8,7 +8,12 @@ body {
   background: lemonchiffon;
 }
 
-.load-button {
+.app-title {
+  text-align: center;
+  color: #171821;
+}
+
+.todo-list__load-button {
   background-color: brown;
   border-radius: 5px;
   color: white;
@@ -19,7 +24,7 @@ body {
   font-size: 20px;
 }
 
-.load-button:hover {
+.todo-list__load-button:hover {
   background-color: #bd5151;
   cursor: pointer;
 }

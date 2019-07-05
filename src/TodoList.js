@@ -1,73 +1,69 @@
 import React from 'react';
 import TodoItem from './TodoItem';
 import User from './User';
-import Sorting from './Sorting';
+import Sorter from './Sorter';
+import { getTodos, getUsers } from './getData';
 
 class TodoList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       listOfTodos: [],
-      buttonDisabled: false,
+      visibleTodos: [],
       isLoaded: false,
-      text: 'LOAD',
+      isLoading: false,
     };
-    this.handleClick = this.handleClick.bind(this);
-    this.sortBy = this.sortBy.bind(this);
-    this.checkedTodo = this.checkedTodo.bind(this);
   }
 
-  checkedTodo(id) {
+  loadData = () => {
+    this.setState({ isLoading: true });
+
+    Promise.all([getTodos(), getUsers()])
+      .then(([todos, users]) => {
+        const preparedTodos = todos.map(todo => ({
+          ...todo,
+          user: users.find(user => user.id === todo.userId),
+        }));
+
+        this.setState({
+          listOfTodos: preparedTodos,
+          isLoaded: true,
+          isLoading: false,
+          visibleTodos: preparedTodos,
+        });
+      });
+  }
+
+  sortByUserVals = (target) => {
     this.setState((prevState) => {
-      const checkedTodos = prevState.listOfTodos.map((todo) => {
+      return {
+        visibleTodos: [...prevState.listOfTodos]
+          .sort((a, b) => (a.user[target]).localeCompare(b.user[target])),
+      };
+    });
+  }
+
+  sortBy = (target) => {
+    this.setState((prevState) => {
+      return {
+        visibleTodos: [...prevState.listOfTodos]
+          .sort((a, b) => String(a[target]).localeCompare(String(b[target]))),
+      };
+    });
+  }
+
+  onTodoCheched = (id) => {
+    this.setState((prevState) => {
+      const checkedTodos = prevState.visibleTodos.map((todo) => {
         if (todo.id === id) {
           todo.completed = !todo.completed;
         }
         return todo;
       });
       return {
-        listOfTodos: checkedTodos,
+        visibleTodos: checkedTodos,
       };
     });
-  }
-
-  sortBy(target, nested) {
-    if (!nested) {
-      this.setState({
-        listOfTodos: this.state.listOfTodos
-          .sort((a, b) => String(a[target]).localeCompare(String(b[target]))),
-      });
-    } else {
-      this.setState({
-        listOfTodos: this.state.listOfTodos
-          .sort((a, b) => (
-            String(a[nested][target]).localeCompare(String(b[nested][target]))
-          )),
-      });
-    }
-  }
-
-  handleClick() {
-    this.setState({ buttonDisabled: true, text: 'Loading...' });
-    const todosApi = fetch('https://jsonplaceholder.typicode.com/todos')
-      .then(response => response.json());
-    const usersApi = fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json());
-
-    Promise.all([todosApi, usersApi])
-      .then((finalVals) => {
-        const todos = finalVals[0];
-        const users = finalVals[1];
-        this.setState({
-          listOfTodos: todos.map(todo => (
-            {
-              ...todo,
-              user: users.find(user => user.id === todo.userId),
-            }
-          )),
-          isLoaded: true,
-        });
-      });
   }
 
   render() {
@@ -75,28 +71,30 @@ class TodoList extends React.Component {
       <div className="todo-list">
         { !this.state.isLoaded && (
           <button
-            onClick={this.handleClick}
+            onClick={this.loadData}
             type="button"
-            disabled={this.state.buttonDisabled}
-            className="load-button"
+            disabled={this.state.isLoading}
+            className="todo-list__load-button"
           >
-            {this.state.text}
+            {this.state.isLoading ? 'Loading...' : 'LOAD'}
           </button>
         )}
 
-        <Sorting
-          isLoaded={this.state.isLoaded}
-          sortBy={this.sortBy}
-          filterStatus={this.filterStatus}
-        />
+        { this.state.isLoaded && (
+          <Sorter
+            sortBy={this.sortBy}
+            sortByUserVals={this.sortByUserVals}
+          />
+        )}
 
-        {this.state.listOfTodos.map(todo => (
-          <div className="todo-list__item">
+        {this.state.visibleTodos.map(todo => (
+          <div
+            className="todo-list__item"
+            key={todo.id}
+          >
             <TodoItem
-              key={todo.id}
               item={todo}
-              checked={todo.completed}
-              onChange={this.checkedTodo}
+              onChange={this.onTodoCheched}
             />
             <User user={todo.user} />
           </div>
