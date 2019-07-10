@@ -52,11 +52,14 @@ class TodoList extends React.Component {
     });
   }
 
-  onTodoCheched = (id) => {
+  onTodoChecked = (id) => {
     this.setState((prevState) => {
       const checkedTodos = prevState.visibleTodos.map((todo) => {
         if (todo.id === id) {
-          todo.completed = !todo.completed;
+          return {
+            ...todo,
+            completed: !todo.completed,
+          };
         }
         return todo;
       });
@@ -94,7 +97,7 @@ class TodoList extends React.Component {
           >
             <TodoItem
               item={todo}
-              onChange={this.onTodoCheched}
+              onChange={this.onTodoChecked}
             />
             <User user={todo.user} />
           </div>

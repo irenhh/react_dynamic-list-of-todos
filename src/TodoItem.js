@@ -15,7 +15,7 @@ function TodoItem(props) {
 
       <label
         className="todo-item__title"
-        htmlFor={item.id}
+        htmlFor={`${item.title}-${item.id}`}
         onClick={() => props.onChange(item.id)}
       >
         {item.title}
